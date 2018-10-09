@@ -1,0 +1,21 @@
+version: "3"
+services:
+  web:
+    build:
+      # Context is the dir dockerfile is in
+      # If nested write the path
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - /home/webapp/node_modules
+      - .:/home/webapp
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /home/webapp/node_modules
+      - .:/home/webapp
+    command: ["npm", "run", "test"]
