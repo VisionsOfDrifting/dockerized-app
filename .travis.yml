@@ -1,0 +1,20 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t visionsofdrifting/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run visionsofdrifting/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t visionsofdrifting/multi-client ./client
+  - docker build -t visionsofdrifting/multi-nginx ./nginx
+  - docker build -t visionsofdrifting/multi-server ./server
+  - docker build -t visionsofdrifting/multi-worker ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push visionsofdrifting/multi-client
+  - docker push visionsofdrifting/multi-nginx
+  - docker push visionsofdrifting/multi-server
+  - docker push visionsofdrifting/multi-worker
